@@ -1,5 +1,5 @@
 @group(0) @binding(0) var input_texture : texture_2d<f32>;
-@group(0) @binding(1) var rotated_value : texture_storage_2d<r32float, write>;
+@group(0) @binding(1) var rotated_value : texture_storage_2d<rgba8unorm, write>;
 @group(0) @binding(2) var<uniform> rotation_matrix : mat3x3<f32>;
 @group(0) @binding(3) var samp : sampler;
 
@@ -23,9 +23,9 @@ fn rotate_main(
 
     let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);
 
-    let hsv = rgb2hsv(color.rgb);
+    // let hsv = rgb2hsv(color.rgb);
 
-    textureStore(rotated_value, coords.xy, vec4<f32>(hsv.z, 0.0, 0.0, 0.0));
+    textureStore(rotated_value, coords.xy, color);
 }
 
 fn rgb2hsv(pixel: vec3<f32>) -> vec3<f32> {

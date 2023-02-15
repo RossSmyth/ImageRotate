@@ -39,16 +39,20 @@ fn main() -> anyhow::Result<()> {
     
     let angle = std::f32::consts::PI/4.0;
 
-    let rotation_matrix = [
+    let _rotation_matrix = [
         angle.cos(), -angle.sin(), 0.0, 0.0,
         angle.sin(), angle.cos(), 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
     ];
     
-    let _rotation_matrix = glam::f32::Mat3A::from_angle(angle);
-
-    log::info!("mat: {:?}", rotation_matrix);
-    log::info!("size: {:?}", std::mem::size_of::<glam::f32::Mat3>());
+    let rotation_matrix = crevice::std430::Mat3 {
+        x: crevice::std430::Vec3 { x: angle.cos(), y: (-angle).sin(), z: 0.0 },
+        y: crevice::std430::Vec3 { x: angle.sin(), y: angle.cos(), z: 0.0 },
+        z: crevice::std430::Vec3 { x: 0.0, y: 0.0, z: 1.0 },
+        _pad_x: 0.0,
+        _pad_y: 0.0,
+        _pad_z: 0.0,
+    };
 
     let input_texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("input texture"),
@@ -79,7 +83,7 @@ fn main() -> anyhow::Result<()> {
         mip_level_count: 1,
         sample_count: 1,
         dimension: wgpu::TextureDimension::D2,
-        format: wgpu::TextureFormat::R32Float,
+        format: wgpu::TextureFormat::Rgba8Unorm,
         usage: wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::STORAGE_BINDING,
         view_formats: &[],
     });
