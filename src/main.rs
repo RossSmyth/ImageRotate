@@ -12,7 +12,7 @@ fn main() -> anyhow::Result<()> {
 
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::Backends::VULKAN,
-        ..Default::default() 
+        ..Default::default()
     });
     let adapter = instance
         .request_adapter(&wgpu::RequestAdapterOptionsBase {
@@ -23,7 +23,10 @@ fn main() -> anyhow::Result<()> {
         .block_on()
         .ok_or(anyhow::anyhow!("Couldn't create the adapter"))?;
     let (device, queue) = adapter
-        .request_device(&Default::default(), Some(Path::new(r"C:\Users\Ross\Documents\rotate_calc\debug")))
+        .request_device(
+            &Default::default(),
+            Some(Path::new(r"C:\Users\Ross\Documents\rotate_calc\debug")),
+        )
         .block_on()?;
 
     // Load the image
@@ -36,19 +39,40 @@ fn main() -> anyhow::Result<()> {
         height,
         depth_or_array_layers: 1,
     };
-    
-    let angle = std::f32::consts::PI/4.0;
+
+    let angle = std::f32::consts::PI / 4.0;
 
     let _rotation_matrix = [
-        angle.cos(), -angle.sin(), 0.0, 0.0,
-        angle.sin(), angle.cos(), 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
+        angle.cos(),
+        -angle.sin(),
+        0.0,
+        0.0,
+        angle.sin(),
+        angle.cos(),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
     ];
-    
+
     let rotation_matrix = crevice::std430::Mat3 {
-        x: crevice::std430::Vec3 { x: angle.cos(), y: (-angle).sin(), z: 0.0 },
-        y: crevice::std430::Vec3 { x: angle.sin(), y: angle.cos(), z: 0.0 },
-        z: crevice::std430::Vec3 { x: 0.0, y: 0.0, z: 1.0 },
+        x: crevice::std430::Vec3 {
+            x: angle.cos(),
+            y: (-angle).sin(),
+            z: 0.0,
+        },
+        y: crevice::std430::Vec3 {
+            x: angle.sin(),
+            y: angle.cos(),
+            z: 0.0,
+        },
+        z: crevice::std430::Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 1.0,
+        },
         _pad_x: 0.0,
         _pad_y: 0.0,
         _pad_z: 0.0,
@@ -142,8 +166,8 @@ fn main() -> anyhow::Result<()> {
             wgpu::BindGroupEntry {
                 binding: 2,
                 resource: wgpu::BindingResource::Buffer(
-                    rotation_matrix_buf.as_entire_buffer_binding()      
-                )
+                    rotation_matrix_buf.as_entire_buffer_binding(),
+                ),
             },
             wgpu::BindGroupEntry {
                 binding: 3,
