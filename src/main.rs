@@ -2,7 +2,12 @@ use std::path::Path;
 
 use wgpu::util::DeviceExt;
 
+#[macro_use]
+extern crate log;
+
 fn main() -> anyhow::Result<()> {
+    env_logger::init();
+
     use pollster::FutureExt;
 
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -35,10 +40,15 @@ fn main() -> anyhow::Result<()> {
     let angle = std::f32::consts::PI/4.0;
 
     let rotation_matrix = [
-        angle.cos(), -angle.sin(), 0.0,
-        angle.sin(), angle.cos(), 0.0,
-        0.0, 0.0, 1.0,
+        angle.cos(), -angle.sin(), 0.0, 0.0,
+        angle.sin(), angle.cos(), 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
     ];
+    
+    let _rotation_matrix = glam::f32::Mat3A::from_angle(angle);
+
+    log::info!("mat: {:?}", rotation_matrix);
+    log::info!("size: {:?}", std::mem::size_of::<glam::f32::Mat3>());
 
     let input_texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("input texture"),
@@ -91,7 +101,7 @@ fn main() -> anyhow::Result<()> {
 
     let rotation_matrix_buf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Rotation Matrix"),
-        contents: bytemuck::cast_slice(rotation_matrix.as_slice()),
+        contents: bytemuck::bytes_of(&rotation_matrix),
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
     });
 

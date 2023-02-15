@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.69"
 bytemuck = "1.13.0"
+env_logger = "0.10.0"
+glam = { version = "0.22.0", features = ["bytemuck"] }
 image = "0.24.5"
+log = "0.4.17"
 pollster = "0.3.0"
 wgpu = { version="0.15.1", features=["trace"]}
