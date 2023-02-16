@@ -41,13 +41,13 @@ fn main() -> anyhow::Result<()> {
     };
 
     let angle = std::f32::consts::PI / 4.0;
-    
-    fn def_3x3(row1: &[f32; 3], row2: &[f32; 3], row3: &[f32; 3]) -> [u8; 48]
-    {
+
+    fn def_3x3(row1: &[f32; 3], row2: &[f32; 3], row3: &[f32; 3]) -> [u8; 48] {
         let [x1, y1, z1] = *row1;
         let [x2, y2, z2] = *row2;
         let [x3, y3, z3] = *row3;
 
+        #[rustfmt::skip]
         let output = [
             x1, x2, x3, y1,
             y2, y3, z1, z2,
@@ -56,14 +56,19 @@ fn main() -> anyhow::Result<()> {
         bytemuck::cast(output)
     }
 
+    #[rustfmt::skip]
     let rotation_matrix: [[f32; 3];3] = [
         [angle.cos(), (-angle).sin(), 0.0],
         [angle.sin(), angle.cos(),    0.0],
         [0.0,         0.0,            1.0],
     ];
 
-    let rotation_matrix = def_3x3(&rotation_matrix[0], &rotation_matrix[1], &rotation_matrix[2]);
-    
+    let rotation_matrix = def_3x3(
+        &rotation_matrix[0],
+        &rotation_matrix[1],
+        &rotation_matrix[2],
+    );
+
     device.start_capture();
 
     let input_texture = device.create_texture(&wgpu::TextureDescriptor {
@@ -227,8 +232,8 @@ fn main() -> anyhow::Result<()> {
     {
         pixels.copy_from_slice(&padded[..unpadded_bytes_per_row]);
     }
-    
-device.stop_capture();
+
+    device.stop_capture();
 
     if let Some(output_image) =
         image::ImageBuffer::<image::Rgba<u8>, _>::from_raw(width, height, &pixels[..])
