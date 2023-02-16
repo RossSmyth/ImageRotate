@@ -61,12 +61,6 @@ fn main() -> anyhow::Result<()> {
         [angle.sin(), angle.cos(),    0.0],
         [0.0,         0.0,            1.0],
     ];
-    
-    let rotation_matrix: [[f32; 3];3] = [
-        [angle.cos(), angle.sin(), 0.0],
-        [(-angle).sin(), angle.cos(), 0.0],
-        [0.0, 0.0, 1.0]
-    ];
 
     let rotation_matrix = def_3x3(&rotation_matrix[0], &rotation_matrix[1], &rotation_matrix[2]);
     
