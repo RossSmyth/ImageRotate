@@ -23,7 +23,7 @@ fn rotate_main(
     let trans_coords = rotation_matrix * vec3<f32>((fcords - basis_change), 1.0);
     let sample_coords = trans_coords.xy + basis_change;
 
-    let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);
+    let color = textureSampleLevel(input_texture, samp, fcords, 0.0);
 
     // let hsv = rgb2hsv(color.rgb);
 

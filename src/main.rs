@@ -1,9 +1,6 @@
-use std::path::Path;
+use std::{num::NonZeroU64, path::Path};
 
 use wgpu::util::DeviceExt;
-
-#[macro_use]
-extern crate log;
 
 fn main() -> anyhow::Result<()> {
     env_logger::init();
@@ -112,7 +109,7 @@ fn main() -> anyhow::Result<()> {
         address_mode_w: wgpu::AddressMode::ClampToEdge,
         mag_filter: wgpu::FilterMode::Linear,
         min_filter: wgpu::FilterMode::Linear,
-        mipmap_filter: wgpu::FilterMode::Linear,
+        mipmap_filter: wgpu::FilterMode::Nearest,
         lod_min_clamp: 0.0,
         lod_max_clamp: f32::MAX,
         compare: None,
@@ -133,16 +130,64 @@ fn main() -> anyhow::Result<()> {
         source: wgpu::ShaderSource::Wgsl(include_str!("shaders/rotate.wgsl").into()),
     });
 
+    let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: Some("Bind Group Layout"),
+        entries: &[
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Texture {
+                    sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                    view_dimension: wgpu::TextureViewDimension::D2,
+                    multisampled: false,
+                },
+                count: None,
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                count: None,
+                ty: wgpu::BindingType::StorageTexture {
+                    access: wgpu::StorageTextureAccess::WriteOnly,
+                    format: wgpu::TextureFormat::Rgba8Unorm,
+                    view_dimension: wgpu::TextureViewDimension::D2,
+                },
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                count: None,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: NonZeroU64::new(48),
+                },
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 3,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                count: None,
+                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+            },
+        ],
+    });
+
+    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("Pipeline Layout"),
+        bind_group_layouts: &[&bind_group_layout],
+        push_constant_ranges: &[],
+    });
+
     let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
         label: Some("Rotation pipeline"),
-        layout: None,
+        layout: Some(&pipeline_layout),
         module: &shader,
         entry_point: "rotate_main",
     });
 
     let texture_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("Texture bind group"),
-        layout: &pipeline.get_bind_group_layout(0),
+        layout: &bind_group_layout,
         entries: &[
             wgpu::BindGroupEntry {
                 binding: 0,
