@@ -19,7 +19,7 @@ fn rotate_main(
 
     let uv_coords = vec2<f32>(coords) / vec2<f32>(dimensions.xy);
 
-    let trans_coords =  vec3<f32>((uv_coords - basis_change), 1.0) * rotation_matrix;
+    let trans_coords =  rotation_matrix * vec3<f32>((uv_coords - basis_change), 1.0);
     let sample_coords = trans_coords.xy + basis_change;
 
     let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);

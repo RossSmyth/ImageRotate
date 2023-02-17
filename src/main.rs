@@ -46,9 +46,9 @@ fn main() -> anyhow::Result<()> {
 
         #[rustfmt::skip]
         let output = [
-            x1, y1, z1, 0.0,
-            x2, y2, z2, 0.0,
-            x3, y3, z3, 0.0,
+            x1, x2, x3, 0.0,
+            y1, y2, y3, 0.0,
+            z1, z2, z3, 0.0,
         ];
         bytemuck::cast(output)
     }
@@ -57,7 +57,7 @@ fn main() -> anyhow::Result<()> {
     let rotation_matrix: [[f32; 3];3] = [
         [angle.cos(), (-angle).sin(), 0.0],
         [angle.sin(), angle.cos(),    0.0],
-        [0.0,         0.0,            1.0],
+        [0.0,         0.0,            8.0],
     ];
 
     let rotation_matrix = def_3x3(
