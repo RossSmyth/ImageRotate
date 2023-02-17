@@ -9,21 +9,21 @@ fn rotate_main(
     @builtin(global_invocation_id) global_id: vec3<u32>,
 ) {
     let dimensions = textureDimensions(input_texture);
-    let coords = vec2<i32>(global_id.xy);
+    let coords = global_id.xy;
 
     if coords.x >= dimensions.x || coords.y >= dimensions.y {
         return;
     }
 
     let dims = vec2<f32>(dimensions);
-    let fcords = vec2<f32>(coords);
+    let uv_coords = vec2<f32>(coords) / vec2<f32>(dimensions.xy);
     
-    let basis_change = dims.xy * 0.5;
+    let basis_change = 0.5;
 
-    let trans_coords = rotation_matrix * vec3<f32>((fcords - basis_change), 1.0);
+    let trans_coords = rotation_matrix * vec3<f32>((uv_coords - basis_change), 1.0);
     let sample_coords = trans_coords.xy + basis_change;
 
-    let color = textureSampleLevel(input_texture, samp, fcords, 0.0);
+    let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);
 
     // let hsv = rgb2hsv(color.rgb);
 
