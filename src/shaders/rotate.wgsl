@@ -3,24 +3,23 @@
 @group(0) @binding(2) var<uniform> rotation_matrix : mat3x3<f32>;
 @group(0) @binding(3) var samp : sampler;
 
+const basis_change : f32 = 0.5;
+
 @compute
 @workgroup_size(16, 16)
 fn rotate_main(
     @builtin(global_invocation_id) global_id: vec3<u32>,
 ) {
     let dimensions = textureDimensions(input_texture);
-    let coords = global_id.xy;
+    let coords = vec2<i32>(global_id.xy);
 
     if coords.x >= dimensions.x || coords.y >= dimensions.y {
         return;
     }
 
-    let dims = vec2<f32>(dimensions);
     let uv_coords = vec2<f32>(coords) / vec2<f32>(dimensions.xy);
-    
-    let basis_change = 0.5;
 
-    let trans_coords = rotation_matrix * vec3<f32>((uv_coords - basis_change), 1.0);
+    let trans_coords =  vec3<f32>((uv_coords - basis_change), 1.0) * rotation_matrix;
     let sample_coords = trans_coords.xy + basis_change;
 
     let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);

@@ -37,7 +37,7 @@ fn main() -> anyhow::Result<()> {
         depth_or_array_layers: 1,
     };
 
-    let angle = std::f32::consts::PI / 4.0;
+    let angle = std::f32::consts::PI / 2.0;
 
     fn def_3x3(row1: &[f32; 3], row2: &[f32; 3], row3: &[f32; 3]) -> [u8; 48] {
         let [x1, y1, z1] = *row1;
@@ -46,9 +46,9 @@ fn main() -> anyhow::Result<()> {
 
         #[rustfmt::skip]
         let output = [
-            x1, x2, x3, y1,
-            y2, y3, z1, z2,
-            z3, 0.0, 0.0, 0.0,
+            x1, y1, z1, 0.0,
+            x2, y2, z2, 0.0,
+            x3, y3, z3, 0.0,
         ];
         bytemuck::cast(output)
     }
