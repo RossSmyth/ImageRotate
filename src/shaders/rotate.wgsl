@@ -17,9 +17,11 @@ fn rotate_main(
 
     let dims = vec2<f32>(dimensions);
     let fcords = vec2<f32>(coords);
+    
+    let basis_change = dims.xy * 0.5;
 
-    let trans_coords = rotation_matrix * vec3<f32>((fcords - dims.xy * 0.5), 1.0);
-    let sample_coords = trans_coords.xy + 2.0 * dims.xy;
+    let trans_coords = rotation_matrix * vec3<f32>((fcords - basis_change), 1.0);
+    let sample_coords = trans_coords.xy + basis_change;
 
     let color = textureSampleLevel(input_texture, samp, sample_coords, 0.0);
 
