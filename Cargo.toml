@@ -1,7 +1,15 @@
 [package]
 name = "rotate_calc"
-version = "0.1.0"
+version = "0.0.2"
 edition = "2021"
+description = "Automatically aligns images"
+repository = "https://github.com/RossSmyth/ImageRotate/"
+readme = "README.md"
+license = "BlueOak-1.0.0"
+
+exclude = [
+  "/.github/",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
