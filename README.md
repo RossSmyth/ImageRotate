@@ -49,6 +49,7 @@ Essentially pretend the input image is a 3D buffer depth N - 1.
 6. For each pixel, rotate the coordinates by `dTheta * global_id.z`
 
 Exactly how this is done is TBD. Options:
+
     * Calculate N - 1 rotation matrices and bind them to an array
     * Calculate the matrix in each shader invocation. But I believe `sin()` and `cos()` are slow
     so I'd like to avoid that.
@@ -62,6 +63,7 @@ That's all that's designed so far. The rest needs more R&D.
 ## TODO
 
 [x] Make a shader that rotates an image
+
 [] The rest of the owl
 
 

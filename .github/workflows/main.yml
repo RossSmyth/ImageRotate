@@ -14,33 +14,34 @@ defaults:
     shell: bash
 
 jobs:
-  rustfmt:
-
+  formatting:
+    name: Clippy & Rustfmt
     runs-on: ubuntu-latest
-
+    
     steps:
+    - name: Checkout
     - uses: actions/checkout@v3
+
+    - name: Install Toolchain
     - uses: dtolnay/rust-toolchain@stable
       with:
-        components: rustfmt
-        toolchain: stable
-    - run: cargo fmt --all --check
-
-  clippy:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - uses: dtolnay/rust-toolchain@stable
-      with:
-        components: clippy
-        toolchain: stable
+        components: rustfmt, clippy
+    
+    - uses: Swatinem/rust-cache@v2
+    
+    - name: Clippy Check
     - uses: actions-rs-plus/clippy-check@4f0f406361254011722b2da38ee8bf848e832bd3
       with:
-          args: --all-features
+          args: --all --all-targets
+    
+    - name: Rustfmt check
+    - uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: --all -- --check
 
   check:
+    name: Cargo Check
     runs-on: ${{ matrix.os }}
     env:
       CARGO_PROFILE_DEV_DEBUG: 1
@@ -51,18 +52,20 @@ jobs:
         include:
         - os: ubuntu-latest
           rust: stable
+        - os: ubuntu-beta
+          rust: beta
+        - os: ubuntu-nightly
+          rust: nightly
         - os: macos-latest
           rust: stable
           other: x86_64-apple-ios
         - os: windows-latest
           rust: stable-msvc
-        - os: windows-latest
-          rust: beta-msvc
-        - os: windows-latest
-          rust: nightly-msvc
-        - os: windows-latest
-          rust: stable-gnu
     steps:
     - uses: actions/checkout@v3
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: matrix.toolchain
+    - uses: Swatinem/rust-cache@v2
     - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
     - run: cargo check --verbose
