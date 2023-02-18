@@ -19,26 +19,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout
-    - uses: actions/checkout@v3
+      - name: Checkout
+      - uses: actions/checkout@v3
 
-    - name: Install Toolchain
-    - uses: dtolnay/rust-toolchain@stable
-      with:
-        components: rustfmt, clippy
+      - name: Install Toolchain
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
     
-    - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@v2
     
-    - name: Clippy Check
-    - uses: actions-rs-plus/clippy-check@4f0f406361254011722b2da38ee8bf848e832bd3
-      with:
-        args: --all --all-targets
+      - name: Clippy Check
+      - uses: actions-rs-plus/clippy-check@4f0f406361254011722b2da38ee8bf848e832bd3
+        with:
+          args: --all --all-targets
     
-    - name: Rustfmt check
-    - uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: --all -- --check
+      - name: Rustfmt check
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
 
   check:
     name: Cargo Check
