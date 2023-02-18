@@ -59,12 +59,11 @@ jobs:
           rust: stable
           other: x86_64-apple-ios
         - os: windows-latest
-          rust: stable-msvc
+          rust: stable
     steps:
     - uses: actions/checkout@v3
     - uses: dtolnay/rust-toolchain@master
       with:
-        toolchain: ${{ matrix.toolchain }}
+        toolchain: ${{matrix.rust}}
     - uses: Swatinem/rust-cache@v2
-    - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
     - run: cargo check --verbose
