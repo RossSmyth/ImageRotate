@@ -1,5 +1,6 @@
 use std::{num::NonZeroU64, path::Path};
 
+use image::{Rgba, RgbaImage};
 use wgpu::util::DeviceExt;
 
 fn main() -> anyhow::Result<()> {
@@ -28,7 +29,7 @@ fn main() -> anyhow::Result<()> {
 
     // Load the image
 
-    let input_image = image::load_from_memory(include_bytes!("sushi.png"))?.to_rgba8();
+    let input_image = image::load_from_memory(SUSHI)?.to_rgba8();
     let (width, height) = input_image.dimensions();
 
     let texture_size = wgpu::Extent3d {
@@ -313,4 +314,43 @@ fn padded_bytes_per_row(width: u32) -> usize {
     let bytes_per_row = width as usize * 4;
     let padding = (256 - bytes_per_row % 256) % 256;
     bytes_per_row + padding
+}
+
+/// Center image within padded buffer
+fn _center_pad(img: RgbaImage, vertical: u32, horizontal: u32) -> RgbaImage {
+    let (img_x, img_y) = img.dimensions();
+
+    let function = |x, y| {
+        if y < vertical || x < horizontal || y >= img_y + vertical || x >= img_x + horizontal {
+            Rgba::<u8>([0, 0, 0, 0])
+        } else {
+            *img.get_pixel(x - horizontal, y - vertical)
+        }
+    };
+
+    image::ImageBuffer::from_fn(img_x + horizontal * 2, img_y + vertical * 2, function)
+}
+
+const SUSHI: &[u8] = include_bytes!("./images/sushi.png");
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    use image::{load_from_memory, ImageResult};
+    const PAD_CAMERA: &[u8] = include_bytes!("./images/cameraman_padded.png");
+    const CAMERAMAN: &[u8] = include_bytes!("./images/cameraman.png");
+
+    #[test]
+    pub fn test_padding() -> ImageResult<()> {
+        let img = load_from_memory(CAMERAMAN)?.to_rgba8();
+        let padded = _center_pad(img, 100, 100);
+
+        assert!(
+            load_from_memory(PAD_CAMERA)?.to_rgba8() == padded,
+            "Image wasn't padded correctly."
+        );
+
+        Ok(())
+    }
 }
