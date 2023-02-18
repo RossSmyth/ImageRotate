@@ -40,7 +40,7 @@ jobs:
           command: fmt
           args: --all -- --check
 
-  test:
+  tests:
     runs-on: ${{ matrix.os }}
     env:
       CARGO_PROFILE_DEV_DEBUG: 1
