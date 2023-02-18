@@ -50,10 +50,10 @@ Essentially pretend the input image is a 3D buffer depth N - 1.
 
 Exactly how this is done is TBD. Options:
 
-    * Calculate N - 1 rotation matrices and bind them to an array
-    * Calculate the matrix in each shader invocation. But I believe `sin()` and `cos()` are slow
-    so I'd like to avoid that.
-    * Use a push constant that sets the rotation matrix and the depth of each dispatch.
+  * Calculate N - 1 rotation matrices and bind them to an array
+  * Calculate the matrix in each shader invocation. But I believe `sin()` and `cos()` are slow
+  so I'd like to avoid that.
+  * Use a push constant that sets the rotation matrix and the depth of each dispatch.
 
 7. Sample the rotated coordinates
 8. `AtomicAdd` the sampled data to the output buffer at index (global_id.z, global_id.y)
@@ -62,8 +62,7 @@ That's all that's designed so far. The rest needs more R&D.
 
 ## TODO
 
-[x] Make a shader that rotates an image
-
-[] The rest of the owl
+- [x] Make a shader that rotates an image
+- [ ] The rest of the owl
 
 
