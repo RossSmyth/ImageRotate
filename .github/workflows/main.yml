@@ -62,10 +62,10 @@ jobs:
         - os: windows-latest
           rust: stable-msvc
     steps:
-    - uses: actions/checkout@v3
-    - uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: matrix.toolchain
-    - uses: Swatinem/rust-cache@v2
-    - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-    - run: cargo check --verbose
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: matrix.toolchain
+      - uses: Swatinem/rust-cache@v2
+      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - run: cargo check --verbose
